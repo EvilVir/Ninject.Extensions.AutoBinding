@@ -37,6 +37,7 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AutoBindingResolver.cs" />
     <Compile Include="InjectableAttribute.cs" />
     <Compile Include="InjectionScope.cs" />
     <Compile Include="NinjectExtensionMethods.cs" />

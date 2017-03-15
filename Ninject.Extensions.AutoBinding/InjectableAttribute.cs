@@ -32,7 +32,7 @@ namespace Ninject.Extensions.AutoBinding
         /// <summary>
         /// Injection scope for this binding
         /// </summary>
-        public InjectionScope Scope { get; set; } = InjectionScope.Transient;
+        public virtual InjectionScope Scope { get; set; } = InjectionScope.Transient;
 
         /// <summary>
         /// If your class implements IDisposable, then it's Dispose() method will be called by Ninject when lifecycle of injectable ends.
@@ -48,6 +48,11 @@ namespace Ninject.Extensions.AutoBinding
         {
             this.Interface = @interface;
             this.Profiles = profiles;
+        }
+
+        int GetScopeCode()
+        {
+            return (int)Scope;
         }
     }
 }

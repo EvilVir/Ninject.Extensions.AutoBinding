@@ -11,7 +11,7 @@ using static Ninject.Extensions.AutoBindingTests.Mocks.BindableImplementationC;
 namespace Ninject.Extensions.AutoBinding.Tests
 {
     [TestClass]
-    public class NinjectExtensionMethodsTests
+    public class NinjectExtensionsAutobindingTests
     {
         protected IKernel container;
 

@@ -1,9 +1,10 @@
-﻿using Ninject.Syntax;
-using System;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Text;
 
-namespace Ninject.Extensions.AutoBinding
+namespace Ninject.Extensions.AutoBinding.Web
 {
     public static class NinjectExtensionMethods
     {

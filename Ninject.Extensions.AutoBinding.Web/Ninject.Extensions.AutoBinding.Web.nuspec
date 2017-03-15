@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>$id$</id>
+    <version>$version$</version>
+    <title>$title$</title>
+    <authors>$author$</authors>
+    <owners>$author$</owners>
+    <projectUrl>https://github.com/EvilVir/Ninject.Extensions.AutoBinding</projectUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>$description$</description>
+    <releaseNotes>Initial release</releaseNotes>
+    <copyright>Copyright Kuba Pilecki / Strange Fog Studios 2017</copyright>
+    <tags>Ninject AutoBinding AutomaticBinding DependencyInjection DependencyDiscovery Ninject.Web</tags>
+  </metadata>
+</package>
