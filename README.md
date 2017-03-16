@@ -71,12 +71,12 @@ public class MyService : IService
 Sometimes you might want to use different implementation depending on execution environment conditions. For example you'll use sandboxed WebService API during development and production one on production server. With this extension you can easly configure which implementation of your classes will be injected. Just use ``Profiles`` property for that and then provide list of profiles to ``AutoBinding(params string[])`` extension method.
 
 ```csharp
-[Injectable(Profiles = "DEV_MODE", Interface = typeof(IWebServiceApi))]
+[Injectable(Profiles =  new string[]{ "DEV_MODE" }, Interface = typeof(IWebServiceApi))]
 public class DevModeSandboxedService : IWebServiceApi
 {
 }
 
-[Injectable(Profiles = "PRODUCTION_MODE", Interface = typeof(IWebServiceApi))]
+[Injectable(Profiles =  new string[]{ "PRODUCTION_MODE" }, Interface = typeof(IWebServiceApi))]
 public class ProductionModeService : IWebServiceApi
 {
 }
@@ -88,12 +88,12 @@ IWebServiceApi apiClient = container.Get<IWebServiceApi>(); // Will return DevMo
 You can also exclude classes from certain profiles. Let's change previous example a little bit:
 
 ```csharp
-[Injectable(Profiles = "DEV_MODE", Interface = typeof(IWebServiceApi))]
+[Injectable(Profiles =  new string[]{ "DEV_MODE" }, Interface = typeof(IWebServiceApi))]
 public class DevModeSandboxedService : IWebServiceApi
 {
 }
 
-[Injectable(ExcludeInProfiles = "DEV_MODE", Interface = typeof(IWebServiceApi))] // Here instead of providing explicit profile name you can exclude that injectable from DEV_MODE profile.
+[Injectable(ExcludeInProfiles =  new string[]{ "DEV_MODE" }, Interface = typeof(IWebServiceApi))] // Here instead of providing explicit profile name you can exclude that injectable from DEV_MODE profile.
 public class ProductionModeService : IWebServiceApi
 {
 }
