@@ -35,6 +35,11 @@ namespace Ninject.Extensions.AutoBinding
         public virtual InjectionScope Scope { get; set; } = InjectionScope.Transient;
 
         /// <summary>
+        /// Injection scope name, if applicable
+        /// </summary>
+        public virtual string ScopeName { get; set; } = string.Empty;
+
+        /// <summary>
         /// If your class implements IDisposable, then it's Dispose() method will be called by Ninject when lifecycle of injectable ends.
         /// You can set this property to true so it won't be called.
         /// </summary>
