@@ -9,6 +9,9 @@ namespace Ninject.Extensions.AutoBinding
     {
         Transient,
         Singleton,
-        Thread
+        Thread,
+        Call,
+        Named,
+        Parent
     }
 }

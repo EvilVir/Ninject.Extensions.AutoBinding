@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using Ninject.Extensions.NamedScope;
 
 namespace Ninject.Extensions.AutoBinding
 {
@@ -124,6 +125,9 @@ namespace Ninject.Extensions.AutoBinding
                 default: case InjectionScope.Transient: return binding.InTransientScope();
                 case InjectionScope.Singleton: return binding.InSingletonScope();
                 case InjectionScope.Thread: return binding.InThreadScope();
+                case InjectionScope.Call: return binding.InCallScope();
+                case InjectionScope.Named: return binding.InNamedScope(attribute.ScopeName);
+                case InjectionScope.Parent: return binding.InParentScope();
             }
         }
     }
