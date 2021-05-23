@@ -9,7 +9,8 @@ namespace Ninject.Extensions.AutoBindingTests.Mocks
 {
 
     [Injectable(Interface = typeof(IBindableService), Profiles = new string[]{ Profiles.PROFILE_B }, Scope = InjectionScope.Singleton)]
-    public class BindableImplementationB : IBindableService
+    [Injectable(Interface = typeof(IBindableServiceB), Profiles = new string[] { Profiles.PROFILE_B }, Scope = InjectionScope.Singleton)]
+    public class BindableImplementationB : IBindableService, IBindableServiceB
     {
         public string Value { get; } = Guid.NewGuid().ToString();
     }
