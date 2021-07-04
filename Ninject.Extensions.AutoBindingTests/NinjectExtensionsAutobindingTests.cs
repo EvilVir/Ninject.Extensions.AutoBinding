@@ -72,8 +72,12 @@ namespace Ninject.Extensions.AutoBinding.Tests
 
             IBindableService instance1 = container.Get<IBindableService>();
             IBindableService instance2 = container.Get<IBindableService>();
+            BindableImplementationB instance3 = container.Get<BindableImplementationB>();
+            IBindableServiceB instance4 = container.Get<IBindableServiceB>();
 
             Assert.AreSame(instance1, instance2);
+            Assert.AreSame(instance1, instance3);
+            Assert.AreSame(instance1, instance4);
         }
 
         [TestMethod]

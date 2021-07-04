@@ -10,4 +10,9 @@ namespace Ninject.Extensions.AutoBindingTests.Mocks
     {
         string Value { get;}
     }
+
+    public interface IBindableServiceB
+    {
+      string Value { get; }
+    }
 }

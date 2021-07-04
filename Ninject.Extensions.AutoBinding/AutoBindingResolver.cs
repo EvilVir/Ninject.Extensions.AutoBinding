@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.Remoting.Messaging;
 using System.Text;
 using Ninject.Extensions.NamedScope;
 
@@ -11,7 +12,8 @@ namespace Ninject.Extensions.AutoBinding
     public class AutoBindingResolver
     {
         protected virtual Type InjectableAttribueType { get; } = typeof(InjectableAttribute);
-
+        private static readonly Dictionary<string, Dictionary<Type, InjectableAttribute[]>> TypeCache = new Dictionary<string, Dictionary<Type, InjectableAttribute[]>>();
+        
         /// <summary>
         /// Binds classes detected in all AppDomain assemblies without profiles filtering.
         /// </summary>
@@ -53,14 +55,27 @@ namespace Ninject.Extensions.AutoBinding
         /// <returns>Passed in Ninject Kernel object for fluent configuration</returns>
         public IKernel AutoBinding(IKernel kernel, Assembly[] seekInAssemblies, params string[] activeProfiles)
         {
-            foreach (Assembly assembly in seekInAssemblies ?? AppDomain.CurrentDomain.GetAssemblies())
+          var inAssemblies = (seekInAssemblies ?? AppDomain.CurrentDomain.GetAssemblies());
+          var cacheKey = string.Join("|",
+              inAssemblies.Select(a => a.FullName).OrderBy(a => a)
+              .ToArray());
+            if (!TypeCache.TryGetValue(
+                cacheKey, out var cacheResult))
             {
-                foreach (Type targetType in assembly.GetTypes().Where(x => x.GetCustomAttributes(InjectableAttribueType, true).Count() > 0))
+                cacheResult = new Dictionary<Type, InjectableAttribute[]>();
+                inAssemblies
+                    .SelectMany(assembly => assembly.GetTypes().Where(x => x.GetCustomAttributes(InjectableAttribueType, true).Length > 0))
+                    .Select(type => new KeyValuePair<Type, InjectableAttribute[]>(type, type.GetCustomAttributes(InjectableAttribueType, true).OfType<InjectableAttribute>().ToArray()))
+                    .ToList()
+                    .ForEach(t => cacheResult.Add(t.Key, t.Value));
+                TypeCache[cacheKey] = cacheResult;
+            }
+
+            foreach (var keyValuePair in cacheResult)
+            {
+                foreach (var injectableAttribute in keyValuePair.Value)
                 {
-                    foreach (InjectableAttribute attribute in targetType.GetCustomAttributes(InjectableAttribueType, true))
-                    {
-                        DoBinding(kernel, targetType, attribute, activeProfiles);
-                    }
+                    DoBinding(kernel, keyValuePair.Key, injectableAttribute, activeProfiles);
                 }
             }
 
@@ -70,6 +85,7 @@ namespace Ninject.Extensions.AutoBinding
         /// <summary>
         /// Does actual binding of target type.
         /// </summary>
+        /// <param name="kernel">Kernel for the binding</param>
         /// <param name="targetType">Type that is bound</param>
         /// <param name="attribute">Attribute from that type that will be used for that binding</param>
         /// <param name="activeProfiles">List of active profiles or null if no profiles mode</param>
@@ -109,13 +125,19 @@ namespace Ninject.Extensions.AutoBinding
                 }
             }
 
-            IBindingWhenInNamedWithOrOnSyntax<object> binding1 = kernel.Bind(attribute.Interface ?? targetType).To(targetType);
-            IBindingNamedWithOrOnSyntax<object> binding2 = DoScopeConfiguration(attribute, binding1);
-
-            if (!attribute.IgnoreDisposable && typeof(IDisposable).IsAssignableFrom(targetType))
+            var binding0 = !kernel.GetBindings(targetType).Any() ? kernel.Bind(targetType).To(targetType) : null;
+            if (binding0 != null)
             {
-                binding2.OnDeactivation(x => ((IDisposable)x).Dispose());
+                var binding1 = DoScopeConfiguration(attribute, binding0);
+                if (!attribute.IgnoreDisposable && typeof(IDisposable).IsAssignableFrom(targetType))
+                {
+                    binding1.OnDeactivation(x => ((IDisposable)x).Dispose());
+                }
             }
+
+            if (attribute.Interface == null) return;
+            kernel.Bind(attribute.Interface).ToMethod(ctx => ctx.Kernel.Get(targetType));
+            
         }
 
         protected virtual IBindingNamedWithOrOnSyntax<object> DoScopeConfiguration(InjectableAttribute attribute, IBindingWhenInNamedWithOrOnSyntax<object> binding)
